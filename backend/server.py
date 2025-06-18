@@ -20,8 +20,8 @@ if not all([ANTHROPIC_API_KEY, GEMINI_API_KEY, PERPLEXITY_API_KEY, DEEPSEEK_API_
 	
 app = Flask(
     __name__,
-    static_folder='static', 
-	static_url_path=''
+    static_folder='static',
+    static_url_path=''
 )
 CORS(app)
 
