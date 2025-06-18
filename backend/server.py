@@ -13,22 +13,29 @@ OPENAI_API_KEY     = os.getenv("OPENAI_API_KEY")
 HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
-print(f"xAI API key loaded: {bool(GROK_API_KEY)}")
 
 if not all([ANTHROPIC_API_KEY, GEMINI_API_KEY, PERPLEXITY_API_KEY, DEEPSEEK_API_KEY, OPENAI_API_KEY, HUGGINGFACE_API_KEY, GROK_API_KEY]):
     raise RuntimeError("Missing keys in .env")
 
 	
-app = Flask(__name__, static_folder='static', static_url_path='')
+app = Flask(
+    __name__,
+    static_folder='static', 
+	static_url_path=''
+)
 CORS(app)
 
 @app.route("/", methods=["GET"])
 def serve_index():
-    return send_from_directory('.', 'index.html')
+    return app.send_static_file('.', 'index.html')
+	
+@app.errorhandler(404)
+def not_found(error):
+    return app.send_static_file('index.html')
 
+	
 @app.route("/api/anthropic", methods=["POST"])
 def anthropic_complete():
-    # Use the Messages API
     headers = {
       "Content-Type": "application/json",
       "x-api-key": ANTHROPIC_API_KEY,
@@ -113,7 +120,6 @@ def perplexity_complete():
 @app.route("/api/deepseek", methods=["POST"])
 def deepseek_complete():
     prompt = request.json.get("prompt", "")
-    # Use official DeepSeek chat completions endpoint
     url = "https://api.deepseek.com/chat/completions"
     headers = {"Authorization":f"Bearer {DEEPSEEK_API_KEY}","Content-Type":"application/json"}
     body = {"model":"deepseek-chat","messages":[
