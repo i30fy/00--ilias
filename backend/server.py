@@ -24,7 +24,7 @@ CORS(app)
 
 @app.route("/", methods=["GET"])
 def serve_index():
-    return send_from_directory('.', '01--index.html')
+    return send_from_directory('.', 'index.html')
 
 @app.route("/api/anthropic", methods=["POST"])
 def anthropic_complete():
